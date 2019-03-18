@@ -71,3 +71,8 @@ dkms.conf
 .nfs*
 
 # End of https://www.gitignore.io/api/c,linux
+
+# Build files
+build/
+.depend
+forensic
