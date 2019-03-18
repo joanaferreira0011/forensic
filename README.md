@@ -27,4 +27,6 @@ In which the options are:
  * `-o`: Output to file. Redirects output to a file named `<outfile>.csv`.
  * `-v`: Verbose. Generates a logfile, with the name indicated by the environment variable `$LOGFILENAME`.
  
-_forensic_ generates the following output.
+_forensic_ generates the following output:
+
+TODO
