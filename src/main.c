@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <regex.h>
 
 static struct {
   bool recursive;
@@ -51,19 +52,144 @@ int process_hash_options(char *argument) {
   if (argument == NULL) {
     return -2;
   }
-  char *temp = argument;
-  char* token;
-  while (!(token = (char*)strtok(temp, ","))) {
-    temp = NULL;
-    if (strncmp (token, "md5", 3) == 0) {
-      command_options.hash_md5 = true;
-    } else if (strncmp(token, "sha1", 4) == 0) {
-      command_options.hash_sha1 = true;
-    } else if (strncmp(token, "sha256", 6) == 0) {
-      command_options.hash_sha256 = true;
-    } else return -1;
+  int state = 0;
+  for (size_t i; argument[i] != '\0'; i++) {
+    printf("state: %d\nchar: %c\n",state, argument[i]);
+    switch (argument[i]) {
+      case ',':
+        switch (state) {
+          case 3:
+            state = 4;
+            break;
+          case 8:
+            state = 9;
+            break;
+          default:
+            state = -1;
+            break;
+        }
+        break;
+        
+      case '1':
+        if (state == 7) {
+          state = 8;
+          command_options.hash_sha1 = true;
+        }
+        else
+          state = -1;
+        break;
+
+      case '2':
+        switch (state) {
+          case 7:
+          case 12:
+            state = 13;
+            break;
+          default:
+            state = -1;
+            break;
+        }
+        break;
+
+      case '5':
+        switch (state) {
+          case 2:
+            state = 3;
+            command_options.hash_md5 = true;
+            break;
+          case 13:
+            state = 14;
+            break;
+          default:
+            state = -1;
+            break;
+        }
+        break;
+
+      case '6':
+        if (state == 14) {
+          state = 15;
+          command_options.hash_sha256 = true;
+        }
+        else
+          state = -1;
+        break;
+
+      case 'a':
+        switch (state) {
+          case 6:
+            state = 7;
+            break;
+          case 11:
+            state = 12;
+            break;
+          default:
+            state = -1;
+            break;
+        }
+        break;
+
+      case 'd':
+        if (state == 1)
+          state = 2;
+        else
+          state = -1;
+        break;
+
+      case 'h':
+        switch (state) {
+          case 5:
+            state = 6;
+            break;
+          case 10:
+            state = 11;
+            break;
+          default:
+            state = -1;
+            break;
+        }
+        break;
+
+      case 'm':
+        if (state == 0)
+          state = 1;
+        else
+          state = -1;
+        break;
+
+      case 's':
+        switch (state) {
+          case 0:
+          case 4:
+            state = 5;
+            break;
+          case 9:
+            state = 10;
+            break;
+          default:
+            state = -1;
+            break;
+        }
+        break;
+
+      default:
+        state = -1;
+        break;
+    }
+    if (state == -1) {
+      printf("state: %d\n",state);
+      return -1;
+    }
   }
-  return 0;
+  printf("state: %d\n",state);
+  switch (state) {
+    case 3:
+    case 8:
+    case 15:
+      return 0;
+      break;
+  }
+  return -1;
 }
 
 int process_output_option(char *argument) {
