@@ -4,4 +4,4 @@
 
 #define MAX_STRING_LENGTH 50
 
-char* getFileTypechar file_name[]);
+char* getStringWithInfo(char file_name[]);

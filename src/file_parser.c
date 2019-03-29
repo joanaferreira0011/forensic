@@ -3,8 +3,6 @@
 #include "file_parser.h"
 #include <sys/stat.h>
 
-
-
 struct file_data{
   struct stat buf;
   char* file_type;
@@ -13,18 +11,32 @@ struct file_data{
 
 struct file_data file_info;
 
-void getFileType(char file_name[]){
-  char info[MAX_STRING_LENGTH];
-  char cmd[MAX_STRING_LENGTH];
+FILE *executeCommand (char *file,  char * command) {
+  FILE *aux = NULL;
+  char cmd[256];
+  strcpy(cmd, command);
+  strcat(cmd, file);
+  aux = popen(cmd, "r");
 
-  //get file type
-  strcpy(cmd, "file");
-  strcat(cmd, " ");
-  strcat(cmd, file_name);
-  strcat (cmd, " > output.txt");
-  //system(cmd);
-
+  return aux;
 }
+
+
+char* getFileType(char *file_name){
+
+  char command[]="file ";
+  FILE *type_of_file = executeCommand(file_name, command);
+  char aux[256];
+  fgets(aux, 255, type_of_file);
+
+  char *file_type = strndup(aux + strlen(file_name) + 2, strlen(aux));
+
+  return file_type;
+}
+
+
+
+
 
 void getFileMD5(char file_name[]){
   char info[MAX_STRING_LENGTH];
@@ -44,25 +56,30 @@ void getFileMD5(char file_name[]){
 
 int getFileInfo(char file_name[]){
   struct stat buf;
-  getFileMD5(file_name);
+  //getFileMD5(file_name);
+  //strcpy(file_info.file_name, file_name);
+  strcpy(file_info.file_type,getFileType(file_name));
   if(stat(file_name, &buf)== -1)
     return -1;
 
   file_info.buf= buf;
 
+  return 0;
+
 }
 
-char* getStringWithInfo(char file_name[]){
-  char str[MAX_STRING_LENGTH];
+char* getStringWithInfo(char* file_name){
+  char* str;
+  str=(char *)malloc(60*sizeof(char));
   char buffer[MAX_STRING_LENGTH];
   getFileInfo(file_name);
 
   // printf("test: %d\n",file_info.buf.st_uid);
 
-  strcpy(str, file_name);
+ strcpy(str, file_name);
 
-  //strcat(str, ",");
-  // strcat(str, file_data.file_type);
+ strcat(str, ",");
+ strcat(str, file_info.file_type);
 
   strcat(str, ",");
   sprintf(buffer, "%lu", file_info.buf.st_size);
@@ -83,8 +100,6 @@ char* getStringWithInfo(char file_name[]){
   strcat(str, ",");
   sprintf(buffer, "%lu", file_info.buf.st_mtime);
   strcat(str, buffer);
-
-
 
   printf("%s", str);
 
