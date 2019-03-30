@@ -76,3 +76,4 @@ dkms.conf
 build/
 .depend
 forensic
+.vscode
