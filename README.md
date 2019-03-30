@@ -4,9 +4,9 @@ _forensic_ is a simple file information utility. It is being developed as a proj
 
 ## Authors
 
- * Cláudia Martins
- * Joana Ferreira
- * João Matos
+* [Claúdia Martins](https://github.com/claudiaicmartins "claudiaicmartins")
+* [Joana Ferreira](https://github.com/joanaferreira0011 "joanaferreira0011")
+* [João Matos](https://github.com/joaonmatos "joaonmatos")
 
 ## Compilation/Installation
 
