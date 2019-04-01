@@ -19,3 +19,4 @@ struct file_info {
 typedef struct file_info file_info;
 
 char* getStringWithInfo(char *file_name, file_info *info);
+

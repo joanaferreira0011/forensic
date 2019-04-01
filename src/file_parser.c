@@ -128,8 +128,9 @@ int getFileInfo(char file_name[], file_info *info){
 }
 
 char* getStringWithInfo(char* file_name, file_info *info){
-  char* str;
-  str=(char *)malloc(60*sizeof(char));
+  char* str = (char *)malloc(60*sizeof(char));
+  if (str == NULL)
+    return NULL;
   getFileInfo(file_name, info);
 
   strcpy(str, info->file_name);
@@ -158,8 +159,6 @@ char* getStringWithInfo(char* file_name, file_info *info){
   
   strcat(str, ", ");
   strcat(str, info->sha256);
-  
-  printf("%s\n", str);
 
   return str;
 }
