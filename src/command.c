@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 static void clear_details(command_details *details) {
     details->recursive = false;
@@ -23,11 +24,14 @@ static int process_input_path(char *argument, command_details *details) {
 }
 
 static int process_hash_options(char *argument, command_details *details) {
-  if (argument == NULL) {
+
+  if (argument == NULL || details == NULL) {
+    printf("null");
     return -2;
   }
+
   int state = 0;
-  for (size_t i; argument[i] != '\0'; i++) {
+  for (size_t i = 0; i < strlen(argument); i++) {
     switch (argument[i]) {
       case ',':
         switch (state) {
@@ -42,7 +46,7 @@ static int process_hash_options(char *argument, command_details *details) {
             break;
         }
         break;
-        
+
       case '1':
         if (state == 7) {
           state = 8;
@@ -182,6 +186,7 @@ static int process_log_option(command_details *details) {
 int process_command(int argc, char *argv[], command_details *details) {
   if (details == NULL)
     return -7;
+
   clear_details(details);
   extern int optind;
   extern char *optarg;
@@ -193,7 +198,7 @@ int process_command(int argc, char *argv[], command_details *details) {
         details->recursive = true;
         break;
       case 'h':
-        if(process_hash_options(optarg, details))
+        if(process_hash_options(strdup(optarg), details))
           return -6;
         break;
       case 'o':

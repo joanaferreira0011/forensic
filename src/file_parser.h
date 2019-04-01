@@ -2,6 +2,7 @@
 
 #include<stdio.h>
 #include <string.h>
+#include "command.h"
 
 #define MAX_STRING_LENGTH 50
 
@@ -18,5 +19,6 @@ struct file_info {
 };
 typedef struct file_info file_info;
 
-char* getStringWithInfo(char *file_name, file_info *info);
+char* getStringWithInfo(file_info *info, command_details *cmd);
 
+void parseFilePrint(command_details *cmd);

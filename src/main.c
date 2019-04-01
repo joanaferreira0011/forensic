@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "command.h"
+#include "file_parser.h"
 
 const char *bool_to_string(bool val) {
   return (val ? "true" : "false");
@@ -43,6 +44,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Could not process command.\n");
     exit(EXIT_FAILURE);
   }
-  print_command_options(details);
+  //print_command_options(details);
+  parseFilePrint(&details);
   exit(EXIT_SUCCESS);
 }
