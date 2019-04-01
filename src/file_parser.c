@@ -4,18 +4,6 @@
 #include <sys/stat.h>
 #include <time.h>
 
-struct {
-  char* file_name;
-  char* file_type;
-  char* file_size;
-  char* file_access;
-  char* file_access_date;
-  char* file_modification_date;
-  char* md5;
-  char* sha1;
-  char* sha256;
-} file_info;
-
 FILE *executeCommand (char *file,  char * command) {
   FILE *aux = NULL;
   char cmd[256];
@@ -90,7 +78,7 @@ char* getSha256Sum (char *file_name){
   return sha256;
 }
 
-int getFileInfo(char file_name[]){
+int getFileInfo(char file_name[], file_info *info){
   struct stat buf;
   char buffer[MAX_STRING_LENGTH];
   char aux[MAX_STRING_LENGTH];
@@ -101,75 +89,75 @@ int getFileInfo(char file_name[]){
     return -1;
 
   //FILE NAME
-  file_info.file_name = file_name; 
+  info->file_name = file_name; 
 
    //FILE TYPE
-  file_info.file_type = getFileType(file_name);
+  info->file_type = getFileType(file_name);
   
   //FILE SIZE
   sprintf(bufs, "%lu", buf.st_size);
-  file_info.file_size = bufs;
+  info->file_size = bufs;
  
   //FILE ACCESS PERMISSIONS
   sprintf(buffer, "%s", (buf.st_mode & S_IRUSR) ? "r" : "-");
   strcat(buffer, (buf.st_mode & S_IWUSR) ? "w" : "-");
-  file_info.file_access=buffer;
+  info->file_access=buffer;
 
   //LAST ACCESS DATE
   struct tm *access;
   access = localtime(&buf.st_atime);
   sprintf(aux, "%d-%d-%dT%d:%d:%d", access->tm_year + 1900, access->tm_mon + 1, access->tm_mday, access->tm_hour +1 , access->tm_min +1, access->tm_sec);
-  file_info.file_access_date=aux;  
+  info->file_access_date=aux;  
 
   //LAST MODIFICATION DATE
   struct tm *modification;
   modification = localtime(&buf.st_mtime);
   sprintf(str, "%d-%d-%dT%d:%d:%d", modification->tm_year + 1900, modification->tm_mon + 1, modification->tm_mday, modification->tm_hour +1 , modification->tm_min +1, modification->tm_sec);
-  file_info.file_modification_date = str;
+  info->file_modification_date = str;
 
   //MD5
-  file_info.md5 = getMD5(file_name);
+  info->md5 = getMD5(file_name);
 
   //SHA1
-  file_info.sha1 = getSha1Sum(file_name);
+  info->sha1 = getSha1Sum(file_name);
 
   //SHA256
-  file_info.sha256 = getSha256Sum(file_name);
+  info->sha256 = getSha256Sum(file_name);
 
   return 0;
 }
 
-char* getStringWithInfo(char* file_name){
+char* getStringWithInfo(char* file_name, file_info *info){
   char* str;
   str=(char *)malloc(60*sizeof(char));
-  getFileInfo(file_name);
+  getFileInfo(file_name, info);
 
-  strcpy(str, file_info.file_name);
+  strcpy(str, info->file_name);
   strcat(str, ", ");
-  strcat(str, file_info.file_type);
-
-  strcat(str, ", ");
-  strcat(str, file_info.file_size);
+  strcat(str, info->file_type);
 
   strcat(str, ", ");
-  strcat(str, file_info.file_access);
+  strcat(str, info->file_size);
 
   strcat(str, ", ");
-  strcat(str, file_info.file_access_date);
+  strcat(str, info->file_access);
 
   strcat(str, ", ");
-  strcat(str, file_info.file_modification_date);
+  strcat(str, info->file_access_date);
 
   strcat(str, ", ");
-  strcat(str, file_info.md5);
+  strcat(str, info->file_modification_date);
 
-  
   strcat(str, ", ");
-  strcat(str, file_info.sha1);
+  strcat(str, info->md5);
 
   
   strcat(str, ", ");
-  strcat(str, file_info.sha256);
+  strcat(str, info->sha1);
+
+  
+  strcat(str, ", ");
+  strcat(str, info->sha256);
   
   printf("%s\n", str);
 
