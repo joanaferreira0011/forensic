@@ -45,6 +45,6 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
   //print_command_options(details);
-  parseFilePrint(&details);
+  parse_file(&details);
   exit(EXIT_SUCCESS);
 }

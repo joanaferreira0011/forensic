@@ -21,4 +21,4 @@ typedef struct file_info file_info;
 
 char* getStringWithInfo(file_info *info, command_details *cmd);
 
-void parseFilePrint(command_details *cmd);
+void parse_file(command_details *cmd);

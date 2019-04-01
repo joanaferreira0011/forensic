@@ -173,7 +173,7 @@ int write_to_file(char* str, char *path_output_file){
   return 0;
 }
 
-void parseFilePrint(command_details *cmd){
+void parse_file(command_details *cmd){
   struct file_info* info= malloc(sizeof(file_info));
   char* str = (char *)malloc(60*sizeof(char));
   getFileInfo(cmd->path_to_target, info);
