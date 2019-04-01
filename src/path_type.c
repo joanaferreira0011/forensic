@@ -5,12 +5,12 @@
 
 path_type get_path_type(char *path) {
     path_type output;
-
     struct stat path_info;
+
     if (stat(path, &path_info) == 0) {
-        if (s.st_mode & S_IFDIR) {
+        if (path_info.st_mode & S_IFDIR)
             output = DIRECTORY;
-        else if (s.st_mode & S_IFREG) {
+        else if (path_info.st_mode & S_IFREG)
             output = FILE;
     }
     else
