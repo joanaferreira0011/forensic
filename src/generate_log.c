@@ -4,13 +4,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-FILE *log = NULL;
+FILE *logfile = NULL;
 
 int openLogfile() {
-    char *logfile = getenv("LOGFILENAME");
+    char *logfile_name = getenv("LOGFILENAME");
 
-    log = fopen(logfile, "a");
-    if (log == NULL)
+    logfile = fopen(logfile_name, "a");
+    if (logfile == NULL)
     {
         return -1;
     }
@@ -19,10 +19,10 @@ int openLogfile() {
 }
 
 double get_time() {
-    
+    return 0;
 }
 
 void updateInfo(char *act)
 {
-    fprintf(log, "%.2f - %.8d - %s\n", get_time(), getpid(), act);
+    fprintf(logfile, "%.2f - %.8d - %s\n", get_time(), getpid(), act);
 }
