@@ -26,7 +26,7 @@ char* getFileType(char *file_name){
   if ((pos=strchr(file_type, '\n')) != NULL)
     *pos = '\0';
 
-  fclose(type_of_file); 
+  fclose(type_of_file);
   return file_type;
 }
 
@@ -42,7 +42,7 @@ char* getMD5(char *file_name){
   if ((pos=strchr(md5, '\n')) != NULL)
     *pos = '\0';
 
-  fclose(md5sum); 
+  fclose(md5sum);
   return md5;
 }
 
@@ -58,7 +58,7 @@ char* getSha1Sum (char *file_name){
   if ((pos=strchr(sha1, '\n')) != NULL)
     *pos = '\0';
 
-  fclose(sha1sum); 
+  fclose(sha1sum);
   return sha1;
 }
 
@@ -74,7 +74,7 @@ char* getSha256Sum (char *file_name){
   if ((pos=strchr(sha256, '\n')) != NULL)
     *pos = '\0';
 
-  fclose(sha256sum); 
+  fclose(sha256sum);
   return sha256;
 }
 
@@ -89,15 +89,15 @@ int getFileInfo(char file_name[], file_info *info){
     return -1;
 
   //FILE NAME
-  info->file_name = file_name; 
+  info->file_name = file_name;
 
    //FILE TYPE
   info->file_type = getFileType(file_name);
-  
+
   //FILE SIZE
   sprintf(bufs, "%lu", buf.st_size);
   info->file_size = bufs;
- 
+
   //FILE ACCESS PERMISSIONS
   sprintf(buffer, "%s", (buf.st_mode & S_IRUSR) ? "r" : "-");
   strcat(buffer, (buf.st_mode & S_IWUSR) ? "w" : "-");
@@ -107,7 +107,7 @@ int getFileInfo(char file_name[], file_info *info){
   struct tm *access;
   access = localtime(&buf.st_atime);
   sprintf(aux, "%d-%d-%dT%d:%d:%d", access->tm_year + 1900, access->tm_mon + 1, access->tm_mday, access->tm_hour +1 , access->tm_min +1, access->tm_sec);
-  info->file_access_date=aux;  
+  info->file_access_date=aux;
 
   //LAST MODIFICATION DATE
   struct tm *modification;
@@ -127,11 +127,11 @@ int getFileInfo(char file_name[], file_info *info){
   return 0;
 }
 
-char* getStringWithInfo(char* file_name, file_info *info){
+char* getStringWithInfo(file_info *info, command_details *cmd){
   char* str = (char *)malloc(60*sizeof(char));
   if (str == NULL)
     return NULL;
-  getFileInfo(file_name, info);
+  getFileInfo(cmd->path_to_target, info);
 
   strcpy(str, info->file_name);
   strcat(str, ", ");
@@ -149,16 +149,37 @@ char* getStringWithInfo(char* file_name, file_info *info){
   strcat(str, ", ");
   strcat(str, info->file_modification_date);
 
-  strcat(str, ", ");
-  strcat(str, info->md5);
+  if(cmd->hash_md5){
+    strcat(str, ", ");
+    strcat(str, info->md5);}
 
-  
-  strcat(str, ", ");
-  strcat(str, info->sha1);
+  if(cmd->hash_sha1){
+    strcat(str, ", ");
+    strcat(str, info->sha1);}
 
-  
-  strcat(str, ", ");
-  strcat(str, info->sha256);
+  if(cmd->hash_sha256){
+    strcat(str, ", ");
+    strcat(str, info->sha256);}
 
   return str;
+}
+
+int write_to_file(char* str, char *path_output_file){
+  FILE * fp;
+  fp = fopen (path_output_file,"w");
+  fprintf (fp, "%s", str);
+  fprintf (fp, "\n");
+  fclose (fp);
+  return 0;
+}
+
+void parse_file(command_details *cmd){
+  struct file_info* info= malloc(sizeof(file_info));
+  char* str = (char *)malloc(60*sizeof(char));
+  getFileInfo(cmd->path_to_target, info);
+  str= getStringWithInfo(info,cmd);
+  if(cmd->output_to_file)
+    write_to_file(str, cmd->path_to_output_file);
+  else
+    printf("%s\n",str);
 }
