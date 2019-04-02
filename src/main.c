@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "command.h"
 #include "file_parser.h"
+#include "generate_log.h"
 
 const char *bool_to_string(bool val) {
   return (val ? "true" : "false");
@@ -39,12 +40,18 @@ void print_command_options(command_details details) {
 }
 
 int main(int argc, char *argv[]) {
+  
   command_details details;
   if (process_command(argc, argv, &details)) {
     fprintf(stderr, "Could not process command.\n");
     exit(EXIT_FAILURE);
   }
-  //print_command_options(details);
+
+  if (details.generate_log) {
+    openLogfile();
+  }
+
+  print_command_options(details);
   parse_file(&details);
   exit(EXIT_SUCCESS);
 }
