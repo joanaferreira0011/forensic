@@ -158,7 +158,7 @@ int getFileInfo(char file_name[], file_info *info){
 }
 
 char* getStringWithInfo(file_info *info){
-  char* str = (char *)malloc(MAX_STRING_LENGTH*sizeof(char));
+  char* str = (char *)malloc(2048*sizeof(char));
   if (str == NULL)
     return NULL;
 
