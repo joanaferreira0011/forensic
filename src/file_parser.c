@@ -132,19 +132,19 @@ int getFileInfo(char file_name[], file_info *info){
   //FILE ACCESS PERMISSIONS
   sprintf(buffer, "%s", (buf.st_mode & S_IRUSR) ? "r" : "-");
   strcat(buffer, (buf.st_mode & S_IWUSR) ? "w" : "-");
-  info->file_access=buffer;
+  info->file_access= strdup(buffer);
 
   //LAST ACCESS DATE
   struct tm *access;
   access = localtime(&buf.st_atime);
-  sprintf(aux, "%d-%d-%dT%d:%d:%d", access->tm_year + 1900, access->tm_mon + 1, access->tm_mday, access->tm_hour +1 , access->tm_min +1, access->tm_sec);
-  info->file_access_date=aux;
+  sprintf(aux, "%d-%02d-%02dT%02d:%02d:%02d", access->tm_year + 1900, access->tm_mon + 1, access->tm_mday, access->tm_hour, access->tm_min, access->tm_sec);
+  info->file_access_date = strdup(aux);
 
   //LAST MODIFICATION DATE
   struct tm *modification;
   modification = localtime(&buf.st_mtime);
-  sprintf(str, "%d-%d-%dT%d:%d:%d", modification->tm_year + 1900, modification->tm_mon + 1, modification->tm_mday, modification->tm_hour +1 , modification->tm_min +1, modification->tm_sec);
-  info->file_modification_date = str;
+  sprintf(str, "%d-%02d-%02dT%02d:%02d:%02d", modification->tm_year + 1900, modification->tm_mon + 1, modification->tm_mday, modification->tm_hour, modification->tm_min, modification->tm_sec);
+  info->file_modification_date = strdup(str);
 
   //MD5
   info->md5 = getMD5(file_name);
