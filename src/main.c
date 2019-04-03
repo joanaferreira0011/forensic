@@ -40,12 +40,7 @@ void print_command_options(command_details details) {
     details.path_to_output_file,
     details.path_to_target);
 }
-//
-// int check_file(command_details details){
-//   //print_command_options(details);
-//   parse_file(&details);
-//   return 0;
-// }
+
 
 int check_dir(char* dir){
 
@@ -56,18 +51,13 @@ int check_dir(char* dir){
     type= get_path_type(dir);
 
     if(type==FILE_PATH){
-      //command_details* det = (command_details*) malloc(sizeof(command_details));
-      // memcpy(det, details, sizeof(command_details));
-      // det->path_to_target= dir;
       parse_file(dir);
-      // free(det);
       free(new_dir);
       return 0;
     }
 
     else if (dr == NULL)
     {
-       //free(details);
         printf("Could not open current directory\n" );
         free(new_dir);
         return 0;

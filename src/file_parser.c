@@ -31,7 +31,6 @@ int set_external_output_file(char *path_to_output_file) {
   }
   output_file = new_output_file;
   atexit(close_output_file);
-  printf("set output file to %s\n",path_to_output_file);
   return 0;
 }
 
@@ -126,8 +125,8 @@ int getFileInfo(char file_name[], file_info *info){
   info->file_type = getFileType(file_name);
 
   //FILE SIZE
-  sprintf(bufs, "%lu", buf.st_size);
-  info->file_size = bufs;
+  sprintf(bufs, "%ld", buf.st_size);
+  info->file_size=strdup(bufs);
 
   //FILE ACCESS PERMISSIONS
   sprintf(buffer, "%s", (buf.st_mode & S_IRUSR) ? "r" : "-");
