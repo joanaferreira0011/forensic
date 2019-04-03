@@ -8,12 +8,13 @@ path_type get_path_type(char *path) {
     struct stat path_info;
 
     if (stat(path, &path_info) == 0) {
-        if (path_info.st_mode & S_IFDIR)
+        if (S_ISDIR(path_info.st_mode))
             output = DIRECTORY;
-        else if (path_info.st_mode & S_IFREG)
+        else if (S_ISREG(path_info.st_mode))
             output = FILE_PATH;
     }
     else
         output = ERROR;
     return output;
 }
+
