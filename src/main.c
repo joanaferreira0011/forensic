@@ -5,11 +5,11 @@
 #include <sys/types.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include "command.h"
 #include "file_parser.h"
 #include "path_type.h"
 #include "generate_log.h"
+#include "dir_parser.h"
 
 const char *bool_to_string(bool val) {
   return (val ? "true" : "false");
@@ -42,40 +42,6 @@ void print_command_options(command_details details) {
 }
 
 
-int check_dir(char* dir){
-
-  struct dirent *de;
-   DIR *dr = opendir(dir);
-    path_type type;
-    char* new_dir=(char *)malloc(60*sizeof(char));;
-    type= get_path_type(dir);
-
-    if(type==FILE_PATH){
-      parse_file(dir);
-      free(new_dir);
-      return 0;
-    }
-
-    else if (dr == NULL)
-    {
-        printf("Could not open current directory\n" );
-        free(new_dir);
-        return 0;
-    }
-
-   while ((de = readdir(dr)) != NULL){
-     if(strcmp(de->d_name, "..") && strcmp(de->d_name, ".")){
-       strcpy(new_dir, dir);
-       strcat(new_dir, "/");
-       strcat(new_dir, de->d_name);
-       check_dir(new_dir);}
-     }
-
-
-     free(new_dir);
-     closedir(dr);
-   return 0;
-}
 
 
 int main(int argc, char *argv[]) {
