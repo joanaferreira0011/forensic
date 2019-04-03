@@ -1,10 +1,23 @@
-//#pragma once
+#ifndef __FILE_PARSER_H__
+#define __FILE_PARSER_H__
 
 #include<stdio.h>
 #include <string.h>
 #include "command.h"
 
-#define MAX_STRING_LENGTH 50
+#define MAX_STRING_LENGTH 120
+
+int set_external_output_file(char *path_to_output_file);
+
+void set_output_to_stdout();
+
+typedef struct {
+  bool md5;
+  bool sha1;
+  bool sha256;
+} hash_options_t;
+
+void set_hash_options(hash_options_t new_options);
 
 struct file_info {
   char* file_name;
@@ -19,6 +32,6 @@ struct file_info {
 };
 typedef struct file_info file_info;
 
-char* getStringWithInfo(file_info *info, command_details *cmd);
+void parse_file(char *file);
 
-void parse_file(command_details *cmd);
+#endif/*__FILE_PARSER_H__*/

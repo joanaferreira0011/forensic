@@ -4,6 +4,37 @@
 #include <sys/stat.h>
 #include <time.h>
 
+static FILE *output_file = NULL;
+static hash_options_t hash_options = {
+  .md5 = false,
+  .sha1 = false,
+  .sha256 = false
+};
+
+void set_output_to_stdout() {
+  output_file = stdout;
+}
+
+void set_hash_options(hash_options_t new_options) {
+  hash_options = new_options;
+}
+
+void close_output_file() {
+  fclose(output_file);
+}
+
+int set_external_output_file(char *path_to_output_file) {
+  FILE *new_output_file = fopen(path_to_output_file,"w");
+  if (new_output_file == NULL) {
+    perror("set_external_output_file");
+    return -1;
+  }
+  output_file = new_output_file;
+  atexit(close_output_file);
+  printf("set output file to %s\n",path_to_output_file);
+  return 0;
+}
+
 FILE *executeCommand (char *file,  char * command) {
   FILE *aux = NULL;
   char cmd[256];
@@ -127,11 +158,10 @@ int getFileInfo(char file_name[], file_info *info){
   return 0;
 }
 
-char* getStringWithInfo(file_info *info, command_details *cmd){
-  char* str = (char *)malloc(60*sizeof(char));
+char* getStringWithInfo(file_info *info){
+  char* str = (char *)malloc(MAX_STRING_LENGTH*sizeof(char));
   if (str == NULL)
     return NULL;
-  getFileInfo(cmd->path_to_target, info);
 
   strcpy(str, info->file_name);
   strcat(str, ", ");
@@ -149,37 +179,25 @@ char* getStringWithInfo(file_info *info, command_details *cmd){
   strcat(str, ", ");
   strcat(str, info->file_modification_date);
 
-  if(cmd->hash_md5){
+  if(hash_options.md5){
     strcat(str, ", ");
     strcat(str, info->md5);}
 
-  if(cmd->hash_sha1){
+  if(hash_options.sha1){
     strcat(str, ", ");
     strcat(str, info->sha1);}
 
-  if(cmd->hash_sha256){
+  if(hash_options.sha256){
     strcat(str, ", ");
     strcat(str, info->sha256);}
 
   return str;
 }
 
-int write_to_file(char* str, char *path_output_file){
-  FILE * fp;
-  fp = fopen (path_output_file,"w");
-  fprintf (fp, "%s", str);
-  fprintf (fp, "\n");
-  fclose (fp);
-  return 0;
-}
-
-void parse_file(command_details *cmd){
+void parse_file(char *file){
   struct file_info* info= malloc(sizeof(file_info));
-  char* str = (char *)malloc(60*sizeof(char));
-  getFileInfo(cmd->path_to_target, info);
-  str= getStringWithInfo(info,cmd);
-  if(cmd->output_to_file)
-    write_to_file(str, cmd->path_to_output_file);
-  else
-    printf("%s\n",str);
+  char* str = (char *)malloc(MAX_STRING_LENGTH*sizeof(char));
+  getFileInfo(file, info);
+  str = getStringWithInfo(info);
+  fprintf(output_file, "%s\n", str);
 }

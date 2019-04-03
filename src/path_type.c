@@ -11,7 +11,7 @@ path_type get_path_type(char *path) {
         if (path_info.st_mode & S_IFDIR)
             output = DIRECTORY;
         else if (path_info.st_mode & S_IFREG)
-            output = FILE;
+            output = FILE_PATH;
     }
     else
         output = ERROR;

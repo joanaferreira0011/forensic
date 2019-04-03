@@ -3,7 +3,7 @@
 
 typedef enum {
     ERROR,
-    FILE,
+    FILE_PATH,
     DIRECTORY
 } path_type;
 

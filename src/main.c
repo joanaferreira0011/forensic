@@ -9,6 +9,7 @@
 #include "command.h"
 #include "file_parser.h"
 #include "path_type.h"
+#include "generate_log.h"
 
 const char *bool_to_string(bool val) {
   return (val ? "true" : "false");
@@ -39,14 +40,14 @@ void print_command_options(command_details details) {
     details.path_to_output_file,
     details.path_to_target);
 }
+//
+// int check_file(command_details details){
+//   //print_command_options(details);
+//   parse_file(&details);
+//   return 0;
+// }
 
-int check_file(command_details details){
-  //print_command_options(details);
-  parse_file(&details);
-  return 0;
-}
-
-int check_dir(char* dir, command_details* details){
+int check_dir(char* dir){
 
   struct dirent *de;
    DIR *dr = opendir(dir);
@@ -55,11 +56,11 @@ int check_dir(char* dir, command_details* details){
     type= get_path_type(dir);
 
     if(type==FILE_PATH){
-      command_details* det = (command_details*) malloc(sizeof(command_details));
-      memcpy(det, details, sizeof(command_details));
-      det->path_to_target= dir;
-      parse_file(det);
-      free(det);
+      //command_details* det = (command_details*) malloc(sizeof(command_details));
+      // memcpy(det, details, sizeof(command_details));
+      // det->path_to_target= dir;
+      parse_file(dir);
+      // free(det);
       free(new_dir);
       return 0;
     }
@@ -77,7 +78,7 @@ int check_dir(char* dir, command_details* details){
        strcpy(new_dir, dir);
        strcat(new_dir, "/");
        strcat(new_dir, de->d_name);
-       check_dir(new_dir, details);}
+       check_dir(new_dir);}
      }
 
 
@@ -88,15 +89,34 @@ int check_dir(char* dir, command_details* details){
 
 
 int main(int argc, char *argv[]) {
+
   command_details details;
   if (process_command(argc, argv, &details)) {
-    fprintf(stderr, "Could not process command.\n");
+    fprintf(stderr, "main: could not process command.\n");
     exit(EXIT_FAILURE);
   }
 
+  if (details.generate_log) {
+    if(openLogfile(details.path_to_log_file))
+      exit(EXIT_FAILURE);
+  }
 
-  check_dir(details.path_to_target, &details);
+  if (details.output_to_file) {
+    if (set_external_output_file(details.path_to_output_file))
+      exit(EXIT_FAILURE);
+  }
+  else
+    set_output_to_stdout();
 
+  hash_options_t hash_options = {
+    .md5 = details.hash_md5,
+    .sha1 = details.hash_sha1,
+    .sha256 = details.hash_sha256
+  };
+  set_hash_options(hash_options);
 
+  //print_command_options(details);
+  //parse_file(details.path_to_target);
+  check_dir(details.path_to_target);
   exit(EXIT_SUCCESS);
 }

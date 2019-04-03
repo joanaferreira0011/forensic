@@ -10,6 +10,7 @@ static void clear_details(command_details *details) {
     details->hash_sha1 = false;
     details->hash_sha256 = false;
     details->output_to_file = false;
+    details->generate_log = false;
     details->path_to_log_file = NULL;
     details->path_to_output_file = NULL;
     details->path_to_target = NULL;

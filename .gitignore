@@ -77,3 +77,5 @@ build/
 .depend
 forensic
 .vscode
+
+*txt
