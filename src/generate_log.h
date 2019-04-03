@@ -1,8 +1,8 @@
-#ifndef __GENERATE_LOG_H_
-#define _GENERATE_LOG_H_
+#ifndef __GENERATE_LOG_H__
+#define __GENERATE_LOG_H__
 
-int openLogfile();
+int openLogfile(char* logfile_name);
 
-void updateInfo(char* act);
+void write_to_log(char* act);
 
-#endif  /* _GENERATE_LOG_H_ */
+#endif/*__GENERATE_LOG_H__*/

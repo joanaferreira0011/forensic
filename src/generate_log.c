@@ -3,18 +3,22 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdbool.h>
 
-FILE *logfile = NULL;
+static bool logging_enabled = false;
+static FILE *logfile = NULL;
 
-int openLogfile() {
-    char *logfile_name = getenv("LOGFILENAME");
+void close_log_file() {
+    fclose(logfile);
+}
 
-    logfile = fopen(logfile_name, "a");
-    if (logfile == NULL)
-    {
+int openLogfile(char *logfile_name) {
+    logfile = fopen(logfile_name, "w");
+    if (logfile == NULL) {
+        perror("open_log_file");
         return -1;
     }
-
+    logging_enabled = true;
     return 0;
 }
 
@@ -22,7 +26,7 @@ double get_time() {
     return 0;
 }
 
-void updateInfo(char *act)
-{
-    fprintf(logfile, "%.2f - %.8d - %s\n", get_time(), getpid(), act);
+void write_to_log(char *message) {
+    if (logging_enabled)
+        fprintf(logfile, "%.2f - %.8d - %s\n", get_time(), getpid(), message);
 }
