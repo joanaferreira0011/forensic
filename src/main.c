@@ -41,9 +41,6 @@ void print_command_options(command_details details) {
     details.path_to_target);
 }
 
-
-
-
 int main(int argc, char *argv[]) {
 
   command_details details;
@@ -71,8 +68,6 @@ int main(int argc, char *argv[]) {
   };
   set_hash_options(hash_options);
 
-  //print_command_options(details);
-  //parse_file(details.path_to_target);
   check_dir(details.path_to_target);
   exit(EXIT_SUCCESS);
 }

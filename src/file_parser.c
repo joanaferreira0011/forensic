@@ -6,26 +6,30 @@
 
 static FILE *output_file = NULL;
 static hash_options_t hash_options = {
-  .md5 = false,
-  .sha1 = false,
-  .sha256 = false
-};
+    .md5 = false,
+    .sha1 = false,
+    .sha256 = false};
 
-void set_output_to_stdout() {
+void set_output_to_stdout()
+{
   output_file = stdout;
 }
 
-void set_hash_options(hash_options_t new_options) {
+void set_hash_options(hash_options_t new_options)
+{
   hash_options = new_options;
 }
 
-void close_output_file() {
+void close_output_file()
+{
   fclose(output_file);
 }
 
-int set_external_output_file(char *path_to_output_file) {
-  FILE *new_output_file = fopen(path_to_output_file,"w");
-  if (new_output_file == NULL) {
+int set_external_output_file(char *path_to_output_file)
+{
+  FILE *new_output_file = fopen(path_to_output_file, "w");
+  if (new_output_file == NULL)
+  {
     perror("set_external_output_file");
     return -1;
   }
@@ -34,7 +38,8 @@ int set_external_output_file(char *path_to_output_file) {
   return 0;
 }
 
-FILE *executeCommand (char *file,  char * command) {
+FILE *executeCommand(char *file, char *command)
+{
   FILE *aux = NULL;
   char cmd[256];
   strcpy(cmd, command);
@@ -44,8 +49,9 @@ FILE *executeCommand (char *file,  char * command) {
   return aux;
 }
 
-char* getFileType(char *file_name){
-  char command[]="file ";
+char *getFileType(char *file_name)
+{
+  char command[] = "file ";
   FILE *type_of_file = executeCommand(file_name, command);
   char aux[256];
   fgets(aux, 255, type_of_file);
@@ -53,85 +59,91 @@ char* getFileType(char *file_name){
   char *file_type = strndup(aux + strlen(file_name) + 2, strlen(aux));
 
   char *pos;
-  if ((pos=strchr(file_type, '\n')) != NULL)
+  if ((pos = strchr(file_type, '\n')) != NULL)
     *pos = '\0';
 
   fclose(type_of_file);
   return file_type;
 }
 
-char* getMD5(char *file_name){
+char *getMD5(char *file_name)
+{
   char command[] = "md5sum ";
   FILE *md5sum = executeCommand(file_name, command);
-  char aux[256];
+  char aux[256] = "";
+
   fgets(aux, 255, md5sum);
 
-  char *md5 = strndup(aux , strlen(aux) - strlen(file_name) - 3);
+  char *md5 = strndup(aux, strlen(aux) - strlen(file_name) - 3);
 
   char *pos;
-  if ((pos=strchr(md5, '\n')) != NULL)
+  if ((pos = strchr(md5, '\n')) != NULL)
     *pos = '\0';
 
   fclose(md5sum);
+
   return md5;
 }
 
-char* getSha1Sum (char *file_name){
+char *getSha1Sum(char *file_name)
+{
   char command[] = "sha1sum ";
   FILE *sha1sum = executeCommand(file_name, command);
-  char aux[256];
+  char aux[256] = "";
   fgets(aux, 255, sha1sum);
 
-  char *sha1 = strndup(aux , strlen(aux) - strlen(file_name) - 3);
+  char *sha1 = strndup(aux, strlen(aux) - strlen(file_name) - 3);
 
   char *pos;
-  if ((pos=strchr(sha1, '\n')) != NULL)
+  if ((pos = strchr(sha1, '\n')) != NULL)
     *pos = '\0';
 
   fclose(sha1sum);
   return sha1;
 }
 
-char* getSha256Sum (char *file_name){
+char *getSha256Sum(char *file_name)
+{
   char command[] = "sha256sum ";
   FILE *sha256sum = executeCommand(file_name, command);
-  char aux[256];
+  char aux[256] = "";
   fgets(aux, 255, sha256sum);
 
-  char *sha256 = strndup(aux , strlen(aux) - strlen(file_name) - 3);
+  char *sha256 = strndup(aux, strlen(aux) - strlen(file_name) - 3);
 
   char *pos;
-  if ((pos=strchr(sha256, '\n')) != NULL)
+  if ((pos = strchr(sha256, '\n')) != NULL)
     *pos = '\0';
 
   fclose(sha256sum);
   return sha256;
 }
 
-int getFileInfo(char file_name[], file_info *info){
+int getFileInfo(char file_name[], file_info *info)
+{
   struct stat buf;
   char buffer[MAX_STRING_LENGTH];
   char aux[MAX_STRING_LENGTH];
   char str[MAX_STRING_LENGTH];
   char bufs[MAX_STRING_LENGTH];
 
-  if(stat(file_name, &buf)== -1)
+  if (stat(file_name, &buf) == -1)
     return -1;
 
   //FILE NAME
   info->file_name = file_name;
 
-   //FILE TYPE
+  //FILE TYPE
   info->file_type = getFileType(file_name);
 
   //FILE SIZE
   sprintf(bufs, "%ld", buf.st_size);
-  info->file_size=strdup(bufs);
+  info->file_size = strdup(bufs);
 
   //FILE ACCESS PERMISSIONS
   sprintf(buffer, "%s", (buf.st_mode & S_IRUSR) ? "r" : "-");
   strcat(buffer, (buf.st_mode & S_IWUSR) ? "w" : "-");
-  info->file_access= strdup(buffer);
+  info->file_access = strdup(buffer);
 
   //LAST ACCESS DATE
   struct tm *access;
@@ -145,6 +157,9 @@ int getFileInfo(char file_name[], file_info *info){
   sprintf(str, "%d-%02d-%02dT%02d:%02d:%02d", modification->tm_year + 1900, modification->tm_mon + 1, modification->tm_mday, modification->tm_hour, modification->tm_min, modification->tm_sec);
   info->file_modification_date = strdup(str);
 
+  if (strcmp(info->file_type, "directory") == 0)
+    return 0;
+
   //MD5
   info->md5 = getMD5(file_name);
 
@@ -157,8 +172,9 @@ int getFileInfo(char file_name[], file_info *info){
   return 0;
 }
 
-char* getStringWithInfo(file_info *info){
-  char* str = (char *)malloc(2048*sizeof(char));
+char *getStringWithInfo(file_info *info)
+{
+  char *str = (char *)malloc(2048 * sizeof(char));
   if (str == NULL)
     return NULL;
 
@@ -178,24 +194,34 @@ char* getStringWithInfo(file_info *info){
   strcat(str, ", ");
   strcat(str, info->file_modification_date);
 
-  if(hash_options.md5){
-    strcat(str, ", ");
-    strcat(str, info->md5);}
+  if (strcmp(info->file_type, "directory") == 0)
+    return str;
 
-  if(hash_options.sha1){
+  if (hash_options.md5)
+  {
     strcat(str, ", ");
-    strcat(str, info->sha1);}
+    strcat(str, info->md5);
+  }
 
-  if(hash_options.sha256){
+  if (hash_options.sha1)
+  {
     strcat(str, ", ");
-    strcat(str, info->sha256);}
+    strcat(str, info->sha1);
+  }
+
+  if (hash_options.sha256)
+  {
+    strcat(str, ", ");
+    strcat(str, info->sha256);
+  }
 
   return str;
 }
 
-void parse_file(char *file){
-  struct file_info* info= malloc(sizeof(file_info));
-  char* str = (char *)malloc(MAX_STRING_LENGTH*sizeof(char));
+void parse_file(char *file)
+{
+  struct file_info *info = malloc(sizeof(file_info));
+  char *str = (char *)malloc(MAX_STRING_LENGTH * sizeof(char));
   getFileInfo(file, info);
   str = getStringWithInfo(info);
   fprintf(output_file, "%s\n", str);
