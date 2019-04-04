@@ -45,6 +45,7 @@ int check_dir(char *dir)
           check_dir(new_dir);
         }
       }
+      exit(0);
     }
     else if (pid > 0)
     {
