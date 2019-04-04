@@ -73,6 +73,6 @@ int main(int argc, char *argv[]) {
 
   //print_command_options(details);
   //parse_file(details.path_to_target);
-  check_dir(details.path_to_target);
+  check_dir(details.path_to_target, details.recursive);
   exit(EXIT_SUCCESS);
 }
