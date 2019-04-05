@@ -1,12 +1,4 @@
-#include <dirent.h>
-#include <stdlib.h>
 #include <string.h>
-#include "path_type.h"
-#include "dir_parser.h"
-#include "file_parser.h"
-#include "wait.h"
-#include <sys/types.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <stdlib.h>
 #include "path_type.h"
@@ -15,11 +7,8 @@
 #include "wait.h"
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 #include "generate_log.h"
-
-
-
-
 
 int check_dir(char *dir, bool recursive)
 {
@@ -68,16 +57,24 @@ int check_dir(char *dir, bool recursive)
       wait(NULL);
     }
   }
-  else{
+  else
+  {
     parse_file(dir);
     write_to_log_ANALIZE(dir);
     free(new_dir);
     return 0;
   }
 
+  while (wait(NULL))
+  {
+    if (errno == EINTR)
+      continue;
+    else if (errno == ECHILD)
+      break;
+  }
+
   free(new_dir);
   closedir(dr);
-
 
   return 0;
 }
