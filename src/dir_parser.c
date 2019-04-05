@@ -16,6 +16,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "generate_log.h"
+#include <time.h>
+#include <string.h>
+#include <sys/times.h>
 
 
 
@@ -29,8 +32,9 @@ int check_dir(char *dir, bool recursive)
 
   if (type == FILE_PATH)
   {
+    clock_t end = times(NULL);
     parse_file(dir);
-    write_to_log_ANALIZE(dir);
+    write_to_log_ANALIZE(dir, end);
     free(new_dir);
     return 0;
   }
@@ -45,7 +49,8 @@ int check_dir(char *dir, bool recursive)
   {
 
     parse_file(dir);
-    write_to_log_ANALIZE(dir);
+    clock_t end = times(NULL);
+    write_to_log_ANALIZE(dir, end);
     int pid = fork();
     if (pid == 0)
     {
@@ -68,7 +73,8 @@ int check_dir(char *dir, bool recursive)
   }
   else{
     parse_file(dir);
-    write_to_log_ANALIZE(dir);
+    clock_t end = times(NULL);
+    write_to_log_ANALIZE(dir, end);
     free(new_dir);
     return 0;
   }

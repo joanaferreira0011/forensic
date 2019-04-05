@@ -10,6 +10,7 @@
 #include "path_type.h"
 #include "generate_log.h"
 #include "dir_parser.h"
+ #include <sys/times.h>
 
 const char *bool_to_string(bool val) {
   return (val ? "true" : "false");
@@ -76,7 +77,8 @@ int main(int argc, char *argv[]) {
 
 
   if (details.generate_log) {
-    write_to_log("FINISHED");
+    clock_t end = times(NULL);
+    write_to_log("FINISHED", end);
     close_log_file();
   }
   exit(EXIT_SUCCESS);
