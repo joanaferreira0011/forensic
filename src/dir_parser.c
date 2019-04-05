@@ -9,13 +9,15 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <stdlib.h>
-#include <string.h>
 #include "path_type.h"
 #include "dir_parser.h"
 #include "file_parser.h"
 #include "wait.h"
 #include <sys/types.h>
 #include <unistd.h>
+#include "generate_log.h"
+
+
 
 int check_dir(char *dir, bool recursive)
 {
@@ -28,6 +30,7 @@ int check_dir(char *dir, bool recursive)
   if (type == FILE_PATH)
   {
     parse_file(dir);
+    write_to_log_ANALIZE(dir);
     free(new_dir);
     return 0;
   }
@@ -40,7 +43,9 @@ int check_dir(char *dir, bool recursive)
 
   else if (type == DIRECTORY && recursive)
   {
+
     parse_file(dir);
+    write_to_log_ANALIZE(dir);
     int pid = fork();
     if (pid == 0)
     {
@@ -63,11 +68,14 @@ int check_dir(char *dir, bool recursive)
   }
   else{
     parse_file(dir);
+    write_to_log_ANALIZE(dir);
     free(new_dir);
     return 0;
   }
 
   free(new_dir);
   closedir(dr);
+
+
   return 0;
 }
