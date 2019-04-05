@@ -9,8 +9,11 @@
 #include <unistd.h>
 #include <errno.h>
 #include "generate_log.h"
+#include "sighandler.h"
 
-int check_dir(char *dir, bool recursive)
+static int pidF;
+
+int check_dir(char *dir, bool recursive, bool outputFile)
 {
   struct dirent *de;
   DIR *dr = opendir(dir);
@@ -18,8 +21,18 @@ int check_dir(char *dir, bool recursive)
   char *new_dir = (char *)malloc(60 * sizeof(char));
   type = get_path_type(dir);
 
+  init_signal();
+  pidF = getpid();
+  enum sig_type msg;
+
   if (type == FILE_PATH)
   {
+    if (outputFile)
+    {
+      msg = USR2;
+      print_signal(msg, pidF);
+    }
+
     parse_file(dir);
     write_to_log_ANALIZE(dir);
     free(new_dir);
@@ -36,6 +49,13 @@ int check_dir(char *dir, bool recursive)
   {
     write_to_log_ANALIZE(dir);
     int pid = fork();
+
+    if (outputFile)
+    {
+      msg = USR1;
+      print_signal(msg, pidF);
+    }
+
     if (pid == 0)
     {
       while ((de = readdir(dr)) != NULL)
@@ -45,7 +65,7 @@ int check_dir(char *dir, bool recursive)
           strcpy(new_dir, dir);
           strcat(new_dir, "/");
           strcat(new_dir, de->d_name);
-          check_dir(new_dir, recursive);
+          check_dir(new_dir, recursive, outputFile);
         }
       }
       exit(0);

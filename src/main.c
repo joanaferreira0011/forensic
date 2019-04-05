@@ -1,4 +1,3 @@
-#define _XOPEN_SOURCE
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -48,7 +47,7 @@ int main(int argc, char *argv[])
   set_hash_options(hash_options);
 
   //print_command_options(details);
-  check_dir(details.path_to_target, details.recursive);
+  check_dir(details.path_to_target, details.recursive, details.output_to_file);
 
   if (details.generate_log)
   {

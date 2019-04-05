@@ -3,6 +3,6 @@
 
 #include <stdbool.h>
 
-int check_dir(char* dir, bool recursive);
+int check_dir(char* dir, bool recursive, bool outputFile);
 
 #endif/*__FILE_PARSER_H__*/
