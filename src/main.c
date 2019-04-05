@@ -41,9 +41,6 @@ void print_command_options(command_details details) {
     details.path_to_target);
 }
 
-
-
-
 int main(int argc, char *argv[]) {
   start_clock();
   command_details details;
