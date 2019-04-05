@@ -34,8 +34,6 @@ int check_dir(char *dir, bool recursive)
 
   else if (type == DIRECTORY && recursive)
   {
-
-    parse_file(dir);
     write_to_log_ANALIZE(dir);
     int pid = fork();
     if (pid == 0)
