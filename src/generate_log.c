@@ -74,6 +74,7 @@ int write_to_log(char *message)
 {
   clock_t end = times(NULL);
   double time = get_time(end);
+
   if (time >= 0)
   {
     if (logging_enabled)
