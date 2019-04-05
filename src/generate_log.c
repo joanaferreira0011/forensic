@@ -25,18 +25,18 @@ void write_to_log_COMMAND(int argc, char *argv[])
     strcat(info, " ");
   }
 
-  while (write_to_log(info, begin))
+  while (write_to_log(info))
   {
   }
 }
 
-void write_to_log_ANALIZE(char *dir, clock_t end)
+void write_to_log_ANALIZE(char *dir)
 {
   char info[256];
   strcpy(info, "ANALIZED ");
   strcat(info, dir);
 
-  while (write_to_log(info, end))
+  while (write_to_log(info))
   {
   };
 }
@@ -70,8 +70,9 @@ double get_time(clock_t end)
   return time_spent;
 }
 
-int write_to_log(char *message, clock_t end)
+int write_to_log(char *message)
 {
+  clock_t end = times(NULL);
   double time = get_time(end);
   if (time >= 0)
   {
