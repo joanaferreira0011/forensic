@@ -10,7 +10,7 @@ _forensic_ is a simple file information utility. It is being developed as a proj
 
 ## Compilation/Installation
 
-TODO
+Makefile
 
 ## Usage
 
